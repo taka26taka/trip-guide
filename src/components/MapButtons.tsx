@@ -3,7 +3,7 @@
  * APIは使わず、旅程データに定義された通常URLだけを新しいタブで開く。
  */
 import { Icon } from './Icon'
-import type { MapLinks } from '../data/trip'
+import type { MapLinks } from '../domain/trip'
 
 type MapButtonsProps = {
   map: MapLinks
