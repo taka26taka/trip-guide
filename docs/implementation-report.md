@@ -92,6 +92,7 @@ Node.js 24.22.1 / npm 11.19.1で実行。
 - ブラウザE2EのCI常設、新バージョンの更新通知。
 - 旧スコープ不明のSWキャッシュの自動削除（他アプリ保護のため実施しない）。
 - 新バージョンの本番公開はPRレビューとmainへのマージ後。mainには直接コミットしない。
+- 作業ブランチはSSHでGitHubへ送信済み。接続アプリのPR作成APIが403（Resource not accessible by integration）を返したため、PR自体の作成とPR上のActions実行は未完了。GitHubで[比較画面](https://github.com/taka26taka/trip-guide/compare/main...improve/typescript-quality?expand=1)から作成できる。
 
 ## 7. 追加で技術力を示せる改善
 
