@@ -153,3 +153,9 @@ a { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+
+/* 日数が多い旅行でもタブを縮めず、横方向に操作できる。 */
+.tabs-list { overflow-x: auto; min-width: 0; padding: 4px; }
+.day-tab { flex-shrink: 0; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.map-button:focus-visible, .day-tab:focus-visible, .official-link:focus-visible { outline-color: var(--accent); }

@@ -1,70 +1,8 @@
-/**
- * 旅行データの型と、2026年8月30日〜31日の旅程。
- * 画面側に旅程をハードコードせず、別旅行へ差し替えられる境界として扱う。
- */
-export type StopKind = 'preparation' | 'start' | 'event' | 'sightseeing' | 'meal' | 'transfer' | 'finish'
+import type { Trip } from '../domain/trip'
+import { mapLinks } from '../lib/maps'
+import { validateTrip } from '../domain/validateTrip'
 
-export type StopEmphasis = 'important' | 'critical'
-
-export type MapLinks = {
-  view: string
-  route: string
-}
-
-export type TripStop = {
-  id: string
-  time: string
-  title: string
-  place?: string
-  description: string
-  transport?: string
-  kind: StopKind
-  flexible?: boolean
-  emphasis?: StopEmphasis
-  badge?: string
-  map?: MapLinks
-  note?: string
-  officialUrl?: string
-}
-
-export type TripDay = {
-  id: string
-  date: string
-  dayOfWeek: string
-  theme: string
-  intro: string
-  routeLabel: string
-  preparations?: TripStop[]
-  stops: TripStop[]
-  optionalStops?: TripStop[]
-}
-
-export type Trip = {
-  title: string
-  dateRange: string
-  days: TripDay[]
-}
-
-const mapsSearchUrl = (query: string) =>
-  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`
-
-const mapsDirectionsUrl = (destination: string, origin?: string) => {
-  const params = new URLSearchParams({
-    api: '1',
-    destination,
-    travelmode: 'transit',
-  })
-
-  if (origin) params.set('origin', origin)
-  return `https://www.google.com/maps/dir/?${params.toString()}`
-}
-
-const mapLinks = (place: string, origin?: string): MapLinks => ({
-  view: mapsSearchUrl(place),
-  route: mapsDirectionsUrl(place, origin),
-})
-
-export const trip: Trip = {
+export const trip = {
   title: '神奈川旅行',
   dateRange: '2026/8/30〜8/31',
   days: [
@@ -379,4 +317,6 @@ export const trip: Trip = {
       ],
     },
   ],
-}
+} satisfies Trip
+
+validateTrip(trip)
