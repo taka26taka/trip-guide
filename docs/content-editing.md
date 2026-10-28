@@ -4,7 +4,9 @@
 
 通常の旅行差し替えでは [`src/data/trip.ts`](../src/data/trip.ts) だけを編集します。
 
-画面側の`App.tsx`へ予定を追加する必要はありません。予定は`TripDay.stops`へ追加すると、時系列カードとして自動表示されます。
+画面側の`App.tsx`へ予定を追加する必要はありません。予定は`TripDay.stops`へ追加すると、時刻を左、内容を右に置いた予定表として自動表示されます。
+
+本線に入れない立ち寄り先は、`TripDay.optionalStops`へ追加すると「時間に余裕があれば」の候補として表示されます。本来の予定を優先し、候補は2〜3件程度に絞ります。
 
 ## 予定の基本形
 
@@ -29,14 +31,37 @@
 |---|---:|---|
 | `id` | 必須 | 旅程内で重複しない英数字の識別子 |
 | `time` | 必須 | `10:00頃`、`午後`、`終演後`など利用者向け表示 |
-| `title` | 必須 | カードの大見出し。短くする |
+| `title` | 必須 | 予定表の見出し。短くする |
 | `place` | 任意 | 場所の補足。Google Mapsの検索名と別でもよい |
 | `description` | 必須 | 1〜2文の簡単な説明 |
 | `transport` | 任意 | 次の移動や現在地までの移動方法 |
 | `kind` | 必須 | `start` / `event` / `sightseeing` / `meal` / `transfer` / `finish` |
-| `flexible` | 任意 | 時刻が目安の予定なら`true`。カードに「目安」と表示される |
+| `flexible` | 任意 | 時刻が目安の予定なら`true`。時刻の下に「目安」と表示される |
+| `emphasis` / `badge` | 任意 | 絶対に外せない予定や重要事項を強調する |
 | `map` | 任意 | 主要地点には`mapLinks()`で設定する |
 | `note` | 任意 | 終演後・新幹線時刻未定などの注意事項 |
+| `officialUrl` | 任意 | 営業時間・料金・アクセスを確認する公式ページ |
+
+ホテルでの荷物預けなど、本線の出発前に済ませることは`TripDay.preparations`へ入れます。通常の観光予定と混ぜないことで、出発地点を分かりやすく保てます。
+
+## 寄り道候補
+
+`optionalStops`も`stops`と同じ`TripStop`形式です。`time`には「20分〜」「30分〜」のような滞在時間の目安を入れ、`flexible: true`を設定します。
+
+```ts
+optionalStops: [
+  {
+    id: 'rest-stop',
+    time: '30分〜',
+    title: '立ち寄り先',
+    description: '時間に余裕があるときの候補です。',
+    transport: '前の場所から徒歩',
+    kind: 'sightseeing',
+    flexible: true,
+    map: mapLinks('立ち寄り先', '前の場所'),
+  },
+],
+```
 
 ## 時刻の考え方
 

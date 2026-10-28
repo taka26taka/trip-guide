@@ -2,7 +2,7 @@
 
 2026年8月30日〜31日に使う、スマートフォン向けの家族旅行ガイドです。ログイン・データベース・サーバー・有料APIは使わず、静的ファイルだけで動作します。
 
-旅程は [`src/data/trip.ts`](./src/data/trip.ts) にまとめてあり、画面コンポーネントと分離しています。別の旅行を作るときは、基本的にこのデータを差し替えれば再利用できます。
+旅程は [`src/data/trip.ts`](./src/data/trip.ts) にまとめてあり、画面コンポーネントと分離しています。別の旅行を作るときは、基本的にこのデータを差し替えれば再利用できます。本線の予定に加えて、時間に余裕があるときの立ち寄り候補も定義できます。
 
 ## ドキュメント
 
@@ -72,7 +72,11 @@ GitHub Actionsでもデプロイ前に同じ監査を実行し、moderate以上�
 - `transport`: 移動方法
 - `map.view` / `map.route`: Google Mapsの場所・経路リンク
 - `flexible`: 時刻が目安である予定かどうか
+- `emphasis` / `badge`: 絶対に外せない予定や重要な注意の強調
 - `note`: 補足事項
+- `officialUrl`: 営業時間・アクセスを再確認する公式サイト
+- `preparations`: ホテルや荷物など、観光開始前にすること
+- `optionalStops`: 本線とは別に表示する立ち寄り候補
 
 Google Mapsリンクは `mapsSearchUrl` と `mapsDirectionsUrl` が生成します。APIキーは不要です。
 
@@ -80,7 +84,7 @@ Google Mapsリンクは `mapsSearchUrl` と `mapsDirectionsUrl` が生成しま�
 
 ```text
 src/
-  data/trip.ts             # 旅行タイトル・日付・予定・Maps URL
+  data/trip.ts             # 旅行タイトル・日付・予定・候補・Maps URL
   components/Icon.tsx      # インラインSVGアイコン
   components/MapButtons.tsx # Google Mapsリンク
   App.tsx                  # 日付タブと時系列画面

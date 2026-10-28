@@ -7,11 +7,11 @@
 | ファイル | 役割 |
 |---|---|
 | `src/main.tsx` | ReactをDOMへマウントし、service workerを登録する入口 |
-| `src/App.tsx` | 日付タブ、日ごとの概要、時系列カードを表示する画面本体 |
+| `src/App.tsx` | 日付タブ、日ごとの概要、時刻順の予定表を表示する画面本体 |
 | `src/data/trip.ts` | 旅行データの型、旅程、Google Maps URL生成処理 |
 | `src/components/Icon.tsx` | 外部ライブラリに依存しないインラインSVGアイコン |
 | `src/components/MapButtons.tsx` | 場所検索・経路検索ボタンの共通表示 |
-| `src/styles.css` | 色、タイポグラフィ、タイムライン、レスポンシブUI |
+| `src/styles.css` | 色、タイポグラフィ、紙の予定表、レスポンシブUI |
 | `src/vite-env.d.ts` | Viteの型定義を読み込むTypeScript宣言 |
 
 ## 実行・ビルド設定

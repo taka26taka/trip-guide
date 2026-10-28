@@ -3,7 +3,6 @@
  * 日付の選択状態だけを保持し、表示内容は src/data/trip.ts のデータから描画する。
  */
 import { useEffect, useMemo, useState } from 'react'
-import { Icon } from './components/Icon'
 import { MapButtons } from './components/MapButtons'
 import { trip, type StopKind, type TripDay, type TripStop } from './data/trip'
 import './styles.css'
@@ -11,21 +10,13 @@ import './styles.css'
 const selectedDayStorageKey = 'family-trip-guide-selected-day'
 
 const kindLabels: Record<StopKind, string> = {
+  preparation: '出発前の準備',
   start: '出発',
   event: '舞台',
   sightseeing: '観光',
   meal: '食事',
   transfer: '移動',
   finish: '到着・帰路',
-}
-
-const kindIcons: Record<StopKind, 'pin' | 'train' | 'utensils'> = {
-  start: 'train',
-  event: 'pin',
-  sightseeing: 'pin',
-  meal: 'utensils',
-  transfer: 'train',
-  finish: 'train',
 }
 
 function getInitialDayId() {
@@ -49,36 +40,69 @@ function DayTab({ day, active, onSelect }: { day: TripDay; active: boolean; onSe
   )
 }
 
-function StopCard({ stop, index, isLast }: { stop: TripStop; index: number; isLast: boolean }) {
+function ScheduleRow({ stop }: { stop: TripStop }) {
   return (
-    <article className={`stop-row stop-${stop.kind}`}>
-      <div className="timeline-column" aria-hidden="true">
-        <span className="timeline-dot"><Icon name={kindIcons[stop.kind]} /></span>
-        {!isLast && <span className="timeline-line" />}
+    <article className={`stop-row stop-${stop.kind}${stop.emphasis ? ` is-${stop.emphasis}` : ''}`}>
+      <div className="stop-time-column">
+        <time className="stop-time">{stop.time}</time>
+        {stop.flexible && <span className="time-flexible">目安</span>}
       </div>
-      <div className="stop-card">
-        <div className="stop-card-topline">
-          <time className="stop-time"><Icon name="clock" />{stop.time}{stop.flexible && <span className="time-flexible">目安</span>}</time>
-          <span className="stop-kind">{kindLabels[stop.kind]}</span>
-        </div>
-        <div className="stop-heading">
-          <div>
-            <h3>{stop.title}</h3>
-            {stop.place && <p className="stop-place"><Icon name="pin" />{stop.place}</p>}
-          </div>
-          <span className="stop-number">{String(index + 1).padStart(2, '0')}</span>
-        </div>
+      <div className="stop-content">
+        {stop.badge && <p className="stop-badge">{stop.badge}</p>}
+        <p className="stop-kind">{kindLabels[stop.kind]}</p>
+        <h3>{stop.title}</h3>
+        {stop.place && <p className="stop-place">{stop.place}</p>}
         <p className="stop-description">{stop.description}</p>
         {stop.transport && (
-          <div className="transport-note">
-            <Icon name={stop.kind === 'meal' ? 'utensils' : 'train'} />
-            <span>{stop.transport}</span>
-          </div>
+          <p className="transport-note"><strong>移動方法</strong> {stop.transport}</p>
         )}
         {stop.note && <p className="stop-note">{stop.note}</p>}
         {stop.map && <MapButtons map={stop.map} />}
+        {stop.officialUrl && (
+          <a className="official-link" href={stop.officialUrl} target="_blank" rel="noopener noreferrer">
+            営業時間・アクセスを公式サイトで確認
+          </a>
+        )}
       </div>
     </article>
+  )
+}
+
+function OptionalStops({ stops }: { stops: TripStop[] }) {
+  return (
+    <section className="optional-section" aria-labelledby="optional-title">
+      <div className="section-heading">
+        <div>
+          <p className="section-eyebrow">寄り道の候補</p>
+          <h2 id="optional-title">時間に余裕があれば</h2>
+        </div>
+        <span className="stop-count">{stops.length}件</span>
+      </div>
+      <p className="optional-intro">本来の予定を優先して、行きたいときだけ選びましょう。</p>
+      <div className="schedule-list optional-list">
+        {stops.map((stop) => (
+          <ScheduleRow key={stop.id} stop={stop} />
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function Preparations({ stops }: { stops: TripStop[] }) {
+  return (
+    <section className="preparation-section" aria-labelledby="preparation-title">
+      <div className="section-heading">
+        <div>
+          <p className="section-eyebrow">最初に確認</p>
+          <h2 id="preparation-title">出発前にすること</h2>
+        </div>
+      </div>
+      <div className="schedule-list preparation-list">
+        {stops.map((stop) => (
+          <ScheduleRow key={stop.id} stop={stop} />
+        ))}
+      </div>
+    </section>
   )
 }
 
@@ -102,13 +126,10 @@ function App() {
     <div className="app-shell">
       <header className="hero">
         <div className="hero-inner">
-          <div className="hero-kicker"><span className="kicker-mark">旅</span> 家族の旅のしおり</div>
-          <h1>{trip.title}<br /><span>{trip.dateRange}</span></h1>
-          <p className="hero-lede">次に行く場所と、時間と、移動方法を<br className="mobile-break" />すぐに確認できます。</p>
-          <div className="hero-meta"><Icon name="calendar" /> 2026年8月30日（日）〜31日（月）</div>
+          <p className="hero-kicker">家族旅行のしおり</p>
+          <h1>{trip.title}<span>{trip.dateRange}</span></h1>
+          <p className="hero-lede">次に行く場所と、時間と、移動方法をすぐに確認できます。</p>
         </div>
-        <div className="hero-shape hero-shape-one" />
-        <div className="hero-shape hero-shape-two" />
       </header>
 
       <nav className="day-tabs" aria-label="日付を選ぶ">
@@ -124,38 +145,45 @@ function App() {
 
       <main className="content-width main-content">
         <section className="day-overview" aria-labelledby="day-title">
-          <div className="overview-label">DAY {trip.days.indexOf(activeDay) + 1}</div>
+          <p className="overview-label">{trip.days.indexOf(activeDay) + 1}日目{' '}{activeDay.date}（{activeDay.dayOfWeek}）</p>
           <h2 id="day-title">{activeDay.theme}</h2>
           <p>{activeDay.intro}</p>
-          <div className="route-summary"><Icon name="arrow-right" /> {activeDay.routeLabel}</div>
+          <p className="route-summary"><strong>移動順</strong>{activeDay.routeLabel}</p>
         </section>
+
+        {activeDay.preparations && activeDay.preparations.length > 0 && (
+          <Preparations stops={activeDay.preparations} />
+        )}
 
         <section id="day-schedule" className="schedule-section" aria-labelledby="schedule-title" role="tabpanel">
           <div className="section-heading">
             <div>
-              <p className="section-eyebrow">TODAY&apos;S PLAN</p>
-              <h2 id="schedule-title">今日の予定</h2>
+              <p className="section-eyebrow">時刻順の予定</p>
+              <h2 id="schedule-title">この日の予定</h2>
             </div>
-            <span className="stop-count">{activeDay.stops.length} spots</span>
+            <span className="stop-count">{activeDay.stops.length}件</span>
           </div>
-          <div className="timeline">
-            {activeDay.stops.map((stop, index) => (
-              <StopCard key={stop.id} stop={stop} index={index} isLast={index === activeDay.stops.length - 1} />
+          <div className="schedule-list">
+            {activeDay.stops.map((stop) => (
+              <ScheduleRow key={stop.id} stop={stop} />
             ))}
           </div>
         </section>
 
+        {activeDay.optionalStops && activeDay.optionalStops.length > 0 && (
+          <OptionalStops stops={activeDay.optionalStops} />
+        )}
+
         <aside className="travel-tip">
-          <div className="tip-icon"><Icon name="clock" /></div>
           <div>
             <h2>時間は目安です</h2>
-            <p>舞台や観光の状況に合わせて、無理なく楽しみましょう。迷ったら各カードの「地図を見る」から確認できます。</p>
+            <p>舞台や観光の状況に合わせて、無理なく楽しみましょう。迷ったら各予定の「地図を見る」から確認できます。</p>
           </div>
         </aside>
 
         <footer className="footer">
-          <span>Family Trip Guide</span>
-          <span>神奈川 2026</span>
+          <span>神奈川旅行 2026</span>
+          <span>家族旅行のしおり</span>
         </footer>
       </main>
     </div>
