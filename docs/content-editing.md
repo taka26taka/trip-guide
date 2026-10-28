@@ -35,7 +35,7 @@
 | `place` | 任意 | 場所の補足。Google Mapsの検索名と別でもよい |
 | `description` | 必須 | 1〜2文の簡単な説明 |
 | `transport` | 任意 | 次の移動や現在地までの移動方法 |
-| `kind` | 必須 | `start` / `event` / `sightseeing` / `meal` / `transfer` / `finish` |
+| `kind` | 必須 | `preparation` / `start` / `event` / `sightseeing` / `meal` / `transfer` / `finish` |
 | `flexible` | 任意 | 時刻が目安の予定なら`true`。時刻の下に「目安」と表示される |
 | `emphasis` / `badge` | 任意 | 絶対に外せない予定や重要事項を強調する |
 | `map` | 任意 | 主要地点には`mapLinks()`で設定する |
@@ -96,6 +96,9 @@ map: mapLinks('長谷寺 鎌倉', '長谷駅（神奈川県）')
 3. 各日の`routeLabel`を一方向の移動順で書く
 4. `stops`を時間順に並べる
 5. 地図リンク・時刻の柔軟性・注意事項を確認
-6. READMEの旅行日と説明を更新
+6. HTMLタイトル・manifest・READMEの公開メタ情報を更新
+7. `npm run typecheck`・`npm run lint`・`npm test`・`npm run build`を実行
 
 複数旅行を同時に管理する必要が出た場合は、`src/data/trips/`にデータファイルを分割し、選択する旅行をルートやビルド時設定で切り替える拡張が考えられます。MVPでは旅行データを1つに保ちます。
+
+型定義は`src/domain/trip.ts`、Maps関数は`src/lib/maps.ts`にあります。`trip.ts`は`mapLinks`をimportして使用します。日程は1日以上必要で、日程IDは旅行内、予定IDは準備・本線・候補を通じて日内で一意にします。リンクはHTTPSに限定します。`validateTrip`は型付き静的データの意味的制約を検査し、不正なデータの公開を防ぎます。

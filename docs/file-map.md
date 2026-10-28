@@ -1,14 +1,14 @@
 # ファイルマップ
 
-このプロジェクトの責務を一覧にしたものです。実装ファイルには、コードの冒頭にも役割コメントを付けています。
+このプロジェクトの責務を一覧にしたものです。モジュール間の依存と判断理由はarchitecture.mdを参照してください。
 
 ## アプリ本体
 
 | ファイル | 役割 |
 |---|---|
 | `src/main.tsx` | ReactをDOMへマウントし、service workerを登録する入口 |
-| `src/App.tsx` | 日付タブ、日ごとの概要、時刻順の予定表を表示する画面本体 |
-| `src/data/trip.ts` | 旅行データの型、旅程、Google Maps URL生成処理 |
+| `src/App.tsx` | 旅行の注入、選択状態と表示コンポーネントの組み立て |
+| `src/data/trip.ts` | 既存の静的旅程と意味的検証呼び出し |
 | `src/components/Icon.tsx` | 外部ライブラリに依存しないインラインSVGアイコン |
 | `src/components/MapButtons.tsx` | 場所検索・経路検索ボタンの共通表示 |
 | `src/styles.css` | 色、タイポグラフィ、紙の予定表、レスポンシブUI |
@@ -39,3 +39,7 @@
 | `.github/workflows/deploy.yml` | Node.js 24でci・audit・lint・build後にGitHub Pagesへ公開 |
 
 JSON、SVG、`.nvmrc`、lockfileなど、コメントを持てない形式の責務はこのファイルで補足しています。
+
+## 改善後のモジュール
+
+型・検証・保存・タブ・テスト・ビルド時SW生成の責務と依存関係は[architecture.md](architecture.md)に記載しています。テストは対象と同じ場所の`*.test.ts(x)`、SWは`scripts/sw.test.js`です。

@@ -8,7 +8,9 @@ Node.js 24環境で実行します。
 nvm use
 npm ci
 npm audit --audit-level=moderate
+npm run typecheck
 npm run lint
+npm run test:coverage
 npm run build
 npm run preview
 ```
@@ -70,3 +72,13 @@ npm run preview
 ## 変更時の注意
 
 旅程の変更は`src/data/trip.ts`を編集し、変更後にlint・buildを再実行します。公開済みURLは静的ファイルの更新後、ブラウザのキャッシュやservice workerの影響で古い表示が残ることがあるため、変更確認時は再読み込みまたは別ブラウザでも確認します。
+
+## アクセシビリティ・PWA追加確認
+
+- [ ] 左右/Home/Endキーで日付とフォーカスが移り、Tabでpanelへ移る
+- [ ] 読み上げで選択日とパネルの対応が分かり、非選択日は読まれない
+- [ ] 1日旅程と多日旅程でタブを操作できる
+- [ ] 本番previewでSWインストール完了後、オフライン再読み込みできる
+- [ ] 新ビルド公開後、既存タブを閉じて再訪すると新しい旅程になる
+- [ ] 他アプリのキャッシュが消えない
+- [ ] PRのqualityが成功し、main以外ではデプロイされない
